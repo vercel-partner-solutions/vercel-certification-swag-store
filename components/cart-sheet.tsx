@@ -56,7 +56,7 @@ export function CartSheet() {
                       <div className="flex flex-1 flex-col">
                         <div className="flex justify-between">
                           <Link
-                            href={`/search/${item.productId}`}
+                            href={`/product/${item.productId}`}
                             onClick={closeCart}
                             className="text-sm font-medium text-foreground hover:underline"
                           >

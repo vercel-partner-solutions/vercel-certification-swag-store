@@ -9,7 +9,7 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
-      href={`/search/${product.id}`}
+      href={`/product/${product.id}`}
       className="group block overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-foreground/20"
     >
       <div className="aspect-square overflow-hidden bg-secondary">

@@ -37,7 +37,7 @@ export default function HomePage() {
 
             {heroProduct && (
               <Link
-                href={`/search/${heroProduct.id}`}
+                href={`/product/${heroProduct.id}`}
                 className="group relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-2xl bg-muted lg:mx-0"
               >
                 <Image
