@@ -4,16 +4,6 @@ import { Search, ShoppingBag } from "lucide-react"
 export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background">
-      {/* Sales Banner */}
-      <div className="bg-foreground px-4 py-2 text-center text-sm text-background">
-        <p>
-          <span className="font-semibold">Free shipping</span> on all orders over $100.{" "}
-          <Link href="/products" className="underline underline-offset-2 hover:opacity-80">
-            Shop now
-          </Link>
-        </p>
-      </div>
-
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <svg
@@ -42,6 +32,16 @@ export function Header() {
             <ShoppingBag className="h-5 w-5" />
           </button>
         </nav>
+      </div>
+
+      {/* Sales Banner */}
+      <div className="bg-foreground px-4 py-2 text-center text-sm text-background">
+        <p>
+          <span className="font-semibold">Free shipping</span> on all orders over $100.{" "}
+          <Link href="/products" className="underline underline-offset-2 hover:opacity-80">
+            Shop now
+          </Link>
+        </p>
       </div>
     </header>
   )
