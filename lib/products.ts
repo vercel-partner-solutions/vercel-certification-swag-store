@@ -56,7 +56,7 @@ export const products: Product[] = [
     price: 18,
     description: "Ceramic mug featuring the Vercel logo. 12oz capacity, dishwasher and microwave safe. Perfect for your morning coffee while reviewing deployments.",
     image: "/products/mug.jpg",
-    category: "Accessories",
+    category: "Drinkware",
     stock: 50,
     featured: true,
   },
@@ -106,7 +106,7 @@ export const products: Product[] = [
     price: 32,
     description: "Double-walled stainless steel water bottle. Keeps drinks cold for 24 hours or hot for 12 hours. 20oz capacity with laser-engraved Vercel logo.",
     image: "/products/bottle.jpg",
-    category: "Accessories",
+    category: "Drinkware",
     stock: 22,
     featured: false,
   },
@@ -132,7 +132,7 @@ export const products: Product[] = [
   },
 ]
 
-export const categories = ["All", "Apparel", "Accessories", "Bags"]
+export const categories = ["All", "Apparel", "Accessories", "Drinkware", "Bags"]
 
 export function getProductById(id: string): Product | undefined {
   return products.find((product) => product.id === id)

@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { ProductGrid } from "@/components/product-grid"
+import { CategoryShowcase } from "@/components/category-showcase"
 import { getFeaturedProducts, getProductById } from "@/lib/products"
 
 export default function HomePage() {
@@ -65,6 +66,9 @@ export default function HomePage() {
             )}
           </div>
         </section>
+
+        {/* Category Showcase */}
+        <CategoryShowcase />
 
         {/* Featured Products Section */}
         <section className="mx-auto max-w-6xl px-4 py-16">
