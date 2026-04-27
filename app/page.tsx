@@ -27,7 +27,7 @@ export default function HomePage() {
                 Premium merchandise for developers who ship fast. High-quality apparel and accessories featuring the Vercel brand.
               </p>
               <Link
-                href="/products"
+                href="/search"
                 className="mt-8 inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-80"
               >
                 Shop All Products
@@ -37,7 +37,7 @@ export default function HomePage() {
 
             {heroProduct && (
               <Link
-                href={`/products/${heroProduct.id}`}
+                href={`/search/${heroProduct.id}`}
                 className="group relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-2xl bg-muted lg:mx-0"
               >
                 <Image
@@ -65,7 +65,7 @@ export default function HomePage() {
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-foreground">Featured Products</h2>
             <Link
-              href="/products"
+              href="/search"
               className="flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               View All

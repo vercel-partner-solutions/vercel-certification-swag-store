@@ -1,12 +1,12 @@
 import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-interface ProductsEmptyProps {
+interface SearchEmptyProps {
   query: string
   onClear: () => void
 }
 
-export function ProductsEmpty({ query, onClear }: ProductsEmptyProps) {
+export function SearchEmpty({ query, onClear }: SearchEmptyProps) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary">

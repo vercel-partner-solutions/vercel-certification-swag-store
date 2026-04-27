@@ -1,14 +1,14 @@
 import { Suspense } from "react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { ProductsContent } from "./products-content"
-import { ProductsLoading } from "./products-loading"
+import { SearchContent } from "./search-content"
+import { SearchLoading } from "./search-loading"
 
-interface ProductsPageProps {
+interface SearchPageProps {
   searchParams: Promise<{ q?: string; category?: string }>
 }
 
-export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams
 
   return (
@@ -17,13 +17,13 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
       <main className="flex-1">
         <div className="mx-auto max-w-6xl px-4 py-8">
-          <h1 className="text-2xl font-semibold text-foreground">Products</h1>
+          <h1 className="text-2xl font-semibold text-foreground">Search</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Browse our collection of premium Vercel merchandise
           </p>
 
-          <Suspense fallback={<ProductsLoading />}>
-            <ProductsContent
+          <Suspense fallback={<SearchLoading />}>
+            <SearchContent
               initialQuery={params.q || ""}
               initialCategory={params.category || "All"}
             />

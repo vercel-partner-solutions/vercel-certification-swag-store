@@ -24,7 +24,7 @@ export function Header() {
 
         <nav className="flex items-center gap-6">
           <Link
-            href="/products"
+            href="/search"
             className="text-muted-foreground transition-colors hover:text-foreground"
             aria-label="Search products"
           >

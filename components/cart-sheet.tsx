@@ -35,7 +35,7 @@ export function CartSheet() {
           <div className="flex flex-1 flex-col items-center justify-center gap-4">
             <p className="text-muted-foreground">Your cart is empty</p>
             <Button variant="outline" onClick={closeCart} asChild>
-              <Link href="/products">Continue Shopping</Link>
+              <Link href="/search">Continue Shopping</Link>
             </Button>
           </div>
         ) : (
@@ -56,7 +56,7 @@ export function CartSheet() {
                       <div className="flex flex-1 flex-col">
                         <div className="flex justify-between">
                           <Link
-                            href={`/products/${item.productId}`}
+                            href={`/search/${item.productId}`}
                             onClick={closeCart}
                             className="text-sm font-medium text-foreground hover:underline"
                           >

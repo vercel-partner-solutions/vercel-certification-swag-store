@@ -7,14 +7,14 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ProductGrid } from "@/components/product-grid"
 import { categories, searchProducts } from "@/lib/products"
-import { ProductsEmpty } from "./products-empty"
+import { SearchEmpty } from "./search-empty"
 
-interface ProductsContentProps {
+interface SearchContentProps {
   initialQuery: string
   initialCategory: string
 }
 
-export function ProductsContent({ initialQuery, initialCategory }: ProductsContentProps) {
+export function SearchContent({ initialQuery, initialCategory }: SearchContentProps) {
   const router = useRouter()
 
   const [query, setQuery] = useState(initialQuery)
@@ -36,7 +36,7 @@ export function ProductsContent({ initialQuery, initialCategory }: ProductsConte
       params.set("category", newCategory)
     }
 
-    const newUrl = params.toString() ? `/products?${params.toString()}` : "/products"
+    const newUrl = params.toString() ? `/search?${params.toString()}` : "/search"
     router.replace(newUrl, { scroll: false })
   }, [router])
 
@@ -108,7 +108,7 @@ export function ProductsContent({ initialQuery, initialCategory }: ProductsConte
       {/* Content */}
       <div className="mt-8">
         {products.length === 0 ? (
-          <ProductsEmpty query={query} onClear={handleClearSearch} />
+          <SearchEmpty query={query} onClear={handleClearSearch} />
         ) : (
           <ProductGrid products={products} />
         )}
