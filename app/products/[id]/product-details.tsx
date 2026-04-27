@@ -151,17 +151,6 @@ export function ProductDetails({ product }: ProductDetailsProps) {
               "Add to Cart"
             )}
           </Button>
-
-          {/* Additional Info */}
-          <div className="mt-8 border-t border-border pt-8">
-            <h3 className="text-sm font-medium text-foreground">Product Details</h3>
-            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <li>Product ID: {product.id}</li>
-              <li>Category: {product.category}</li>
-              <li>Free shipping on orders over $50</li>
-              <li>30-day return policy</li>
-            </ul>
-          </div>
         </div>
       </div>
     </div>
