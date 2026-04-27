@@ -14,6 +14,16 @@ export default function HomePage() {
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
 
+      {/* Sales Banner */}
+      <div className="bg-foreground px-4 py-3 text-center text-sm text-background">
+        <p>
+          <span className="font-semibold">Free shipping</span> on all orders over $100.{" "}
+          <Link href="/products" className="underline underline-offset-2 hover:opacity-80">
+            Shop now
+          </Link>
+        </p>
+      </div>
+
       <main className="flex-1">
         {/* Hero Section */}
         <section className="border-b border-border">
