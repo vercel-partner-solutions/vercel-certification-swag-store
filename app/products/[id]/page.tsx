@@ -3,6 +3,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { getProductById, products } from "@/lib/products"
 import { ProductDetails } from "./product-details"
+import { RelatedProducts } from "./related-products"
 
 interface ProductPageProps {
   params: Promise<{ id: string }>
@@ -45,6 +46,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <main className="flex-1">
         <div className="mx-auto max-w-6xl px-4 py-8">
           <ProductDetails product={product} />
+          <RelatedProducts currentProductId={product.id} />
         </div>
       </main>
 

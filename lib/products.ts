@@ -152,3 +152,12 @@ export function searchProducts(query: string, category: string): Product[] {
     return matchesQuery && matchesCategory
   })
 }
+
+export function getRandomProducts(count: number, excludeId?: string): Product[] {
+  const availableProducts = excludeId 
+    ? products.filter((product) => product.id !== excludeId)
+    : products
+  
+  const shuffled = [...availableProducts].sort(() => Math.random() - 0.5)
+  return shuffled.slice(0, count)
+}
