@@ -5,9 +5,7 @@ import { ArrowRight } from "lucide-react"
 export function CategoryShowcase() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-16">
-      <h2 className="text-2xl font-semibold text-foreground">Shop by Category</h2>
-
-      <div className="mt-8 grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         {/* Clothing Category - Dark, bold design */}
         <Link
           href="/products?category=Apparel"
