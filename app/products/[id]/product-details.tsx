@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { ArrowLeft, Minus, Plus, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useCart } from "@/components/cart-provider"
 import type { Product } from "@/lib/products"
 
 interface ProductDetailsProps {
@@ -12,6 +13,7 @@ interface ProductDetailsProps {
 }
 
 export function ProductDetails({ product }: ProductDetailsProps) {
+  const { addToCart, openCart } = useCart()
   const [quantity, setQuantity] = useState(1)
   const [isAdding, setIsAdding] = useState(false)
   const [isAdded, setIsAdded] = useState(false)
@@ -36,16 +38,20 @@ export function ProductDetails({ product }: ProductDetailsProps) {
 
     setIsAdding(true)
 
-    // Simulate adding to cart
-    setTimeout(() => {
-      setIsAdding(false)
-      setIsAdded(true)
+    // Add to cart
+    addToCart(product.id, quantity)
+    
+    setIsAdding(false)
+    setIsAdded(true)
+    
+    // Open cart sheet to show item was added
+    openCart()
 
-      // Reset after showing success
-      setTimeout(() => {
-        setIsAdded(false)
-      }, 2000)
-    }, 500)
+    // Reset button state after showing success
+    setTimeout(() => {
+      setIsAdded(false)
+      setQuantity(1)
+    }, 2000)
   }
 
   return (

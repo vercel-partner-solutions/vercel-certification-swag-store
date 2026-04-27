@@ -1,7 +1,12 @@
+"use client"
+
 import Link from "next/link"
 import { Search, ShoppingBag } from "lucide-react"
+import { useCart } from "@/components/cart-provider"
 
 export function Header() {
+  const { itemCount, openCart } = useCart()
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
@@ -26,10 +31,16 @@ export function Header() {
             <Search className="h-5 w-5" />
           </Link>
           <button
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            onClick={openCart}
+            className="relative text-muted-foreground transition-colors hover:text-foreground"
             aria-label="Shopping cart"
           >
             <ShoppingBag className="h-5 w-5" />
+            {itemCount > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-xs font-medium text-background">
+                {itemCount > 99 ? "99+" : itemCount}
+              </span>
+            )}
           </button>
         </nav>
       </div>
