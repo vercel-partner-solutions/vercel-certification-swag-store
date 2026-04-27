@@ -13,7 +13,7 @@ export function RelatedProducts({ currentProductId }: RelatedProductsProps) {
 
   useEffect(() => {
     // Calculate random products at runtime on the client
-    setProducts(getRandomProducts(3, currentProductId))
+    setProducts(getRandomProducts(4, currentProductId))
   }, [currentProductId])
 
   if (products.length === 0) {
