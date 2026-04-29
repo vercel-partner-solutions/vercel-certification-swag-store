@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import Form from "next/form"
 import { Search, X } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -15,12 +16,20 @@ interface SearchContentProps {
   initialCategory: string
 }
 
+// Map category names to URL slugs
+const categoryToSlug: Record<string, string> = {
+  All: "",
+  Apparel: "apparel",
+  Accessories: "accessories",
+  Drinkware: "drinkware",
+  Bags: "bags",
+}
+
 export function SearchContent({ initialQuery, initialCategory }: SearchContentProps) {
   const router = useRouter()
 
   const [query, setQuery] = useState(initialQuery)
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery)
-  const [category, setCategory] = useState(initialCategory)
 
   // Debounce search query - only trigger when more than 3 characters
   useEffect(() => {
@@ -33,24 +42,20 @@ export function SearchContent({ initialQuery, initialCategory }: SearchContentPr
     }
   }, [query])
 
-  // Update URL when debounced query or category changes
+  // Update URL when debounced query changes (only for query param, not category)
   useEffect(() => {
-    const params = new URLSearchParams()
-
+    const slug = categoryToSlug[initialCategory]
+    const basePath = slug ? `/search/${slug}` : "/search"
+    
     if (debouncedQuery) {
-      params.set("q", debouncedQuery)
+      router.replace(`${basePath}?q=${encodeURIComponent(debouncedQuery)}`, { scroll: false })
+    } else {
+      router.replace(basePath, { scroll: false })
     }
-
-    if (category && category !== "All") {
-      params.set("category", category)
-    }
-
-    const newUrl = params.toString() ? `/search?${params.toString()}` : "/search"
-    router.replace(newUrl, { scroll: false })
-  }, [debouncedQuery, category, router])
+  }, [debouncedQuery, initialCategory, router])
 
   // Get filtered products (limit to 5 when searching)
-  const allResults = searchProducts(debouncedQuery, category)
+  const allResults = searchProducts(debouncedQuery, initialCategory)
   const products = debouncedQuery ? allResults.slice(0, 5) : allResults
 
   const handleClearSearch = useCallback(() => {
@@ -58,16 +63,19 @@ export function SearchContent({ initialQuery, initialCategory }: SearchContentPr
     setDebouncedQuery("")
   }, [])
 
-  const handleCategoryChange = useCallback((newCategory: string) => {
-    setCategory(newCategory)
-  }, [])
+  // Get the URL for a category
+  const getCategoryUrl = (cat: string) => {
+    const slug = categoryToSlug[cat]
+    const queryParam = debouncedQuery ? `?q=${encodeURIComponent(debouncedQuery)}` : ""
+    return slug ? `/search/${slug}${queryParam}` : `/search${queryParam}`
+  }
 
   return (
     <div className="mt-8">
       {/* Search and Filters */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         {/* Search Form */}
-        <Form action="/search" className="relative w-full sm:max-w-sm">
+        <Form action={categoryToSlug[initialCategory] ? `/search/${categoryToSlug[initialCategory]}` : "/search"} className="relative w-full sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="text"
@@ -87,9 +95,6 @@ export function SearchContent({ initialQuery, initialCategory }: SearchContentPr
               <X className="h-4 w-4" />
             </button>
           )}
-          {category !== "All" && (
-            <input type="hidden" name="category" value={category} />
-          )}
         </Form>
 
         {/* Category Filter */}
@@ -97,12 +102,12 @@ export function SearchContent({ initialQuery, initialCategory }: SearchContentPr
           {categories.map((cat) => (
             <Button
               key={cat}
-              variant={category === cat ? "default" : "outline"}
+              variant={initialCategory === cat ? "default" : "outline"}
               size="sm"
-              onClick={() => handleCategoryChange(cat)}
+              asChild
               className="text-xs"
             >
-              {cat}
+              <Link href={getCategoryUrl(cat)}>{cat}</Link>
             </Button>
           ))}
         </div>

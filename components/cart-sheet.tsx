@@ -43,7 +43,7 @@ export function CartSheet() {
             <div className="flex-1 overflow-y-auto">
               <ul className="divide-y divide-border">
                 {cartWithProducts.map((item) => (
-                  <li key={item.productId} className="py-4">
+                  <li key={item.productId} className="px-4 py-4">
                     <div className="flex gap-4">
                       <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md border border-border bg-secondary">
                         <Image

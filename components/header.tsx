@@ -19,7 +19,7 @@ export function Header() {
           >
             <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
           </svg>
-          <span className="font-semibold">Vercel Store</span>
+          <span className="font-semibold">Vercel Swag Store</span>
         </Link>
 
         <nav className="flex items-center gap-6">
@@ -49,7 +49,7 @@ export function Header() {
       <div className="bg-foreground px-4 py-2 text-center text-sm text-background">
         <p>
           <span className="font-semibold">Free shipping</span> on all orders over $100.{" "}
-          <Link href="/products" className="underline underline-offset-2 hover:opacity-80">
+          <Link href="/search" className="underline underline-offset-2 hover:opacity-80">
             Shop now
           </Link>
         </p>

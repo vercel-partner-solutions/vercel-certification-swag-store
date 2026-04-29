@@ -8,7 +8,7 @@ export function CategoryShowcase() {
       <div className="grid gap-6 md:grid-cols-2">
         {/* Clothing Category - Dark, bold design */}
         <Link
-          href="/search?category=Apparel"
+          href="/search/apparel"
           className="group relative flex min-h-[320px] flex-col justify-end overflow-hidden rounded-2xl bg-foreground p-8"
         >
           <div className="absolute inset-0">
@@ -38,7 +38,7 @@ export function CategoryShowcase() {
 
         {/* Drinkware Category - Light, minimal design */}
         <Link
-          href="/search?category=Drinkware"
+          href="/search/drinkware"
           className="group relative flex min-h-[320px] flex-col justify-end overflow-hidden rounded-2xl border border-border bg-muted p-8"
         >
           <div className="absolute inset-0">
