@@ -13,7 +13,7 @@ import type {
 const API_BASE_URL =
   process.env.API_BASE_URL ??
   "https://vercel-agentic-swag-store-api.vercel.app/api";
-const PROTECTION_BYPASS = process.env.VERCEL_PROTECTION_BYPASS_SECRET ?? "";
+const PROTECTION_BYPASS = process.env.BYPASS_SECRET ?? "";
 
 const DEFAULT_REVALIDATE = 300; // 5 minutes for read endpoints
 

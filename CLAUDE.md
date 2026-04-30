@@ -25,7 +25,7 @@ There is no test framework wired up.
 
 `.env.local` (gitignored) holds:
 
-- `VERCEL_PROTECTION_BYPASS_SECRET` — required. Sent as the `x-vercel-protection-bypass` header on every API call. Must never be exposed to the client (no `NEXT_PUBLIC_` prefix).
+- `BYPASS_SECRET` — required. Sent as the `x-vercel-protection-bypass` header on every API call. Must never be exposed to the client (no `NEXT_PUBLIC_` prefix).
 - `API_BASE_URL` — optional. Defaults to `https://vercel-swag-store-api.vercel.app/api` in `lib/api.ts`.
 
 `.env.example` is the redacted template for new developers.
