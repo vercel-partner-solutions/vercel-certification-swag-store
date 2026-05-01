@@ -1,6 +1,7 @@
-import Link from "next/link"
-import { Search } from "lucide-react"
-import { CartButton } from "@/components/cart-button"
+import Link from "next/link";
+import { Search } from "lucide-react";
+import { AgentButton } from "@/components/agent-button";
+import { CartButton } from "@/components/cart-button";
 
 export function Header() {
   return (
@@ -27,8 +28,9 @@ export function Header() {
             <Search className="h-5 w-5" />
           </Link>
           <CartButton />
+          <AgentButton />
         </nav>
       </div>
     </header>
-  )
+  );
 }
