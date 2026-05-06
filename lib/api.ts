@@ -8,6 +8,8 @@ import type {
   Promotion,
   StockInfo,
   StoreConfig,
+  Order,
+  Return,
 } from "./types";
 
 const API_BASE_URL =
@@ -34,6 +36,13 @@ interface ApiSuccess<T> {
 interface ApiFailure {
   success: false;
   error: ApiError;
+}
+
+interface CreateReturnInput {
+  orderId: string;
+  items: { productId: string; quantity: number }[];
+  reason: string;
+  callback?: string; // used in phase 3
 }
 
 type ApiResult<T> = ApiSuccess<T> | ApiFailure;
@@ -247,6 +256,20 @@ export async function cartRemove(
   return request<CartWithProducts>(`/cart/${encodeURIComponent(productId)}`, {
     method: "DELETE",
     cartToken: token,
+    cache: "no-store",
+  });
+}
+
+export async function getOrder(id: string): Promise<Order> {
+  return request<Order>(`/orders/${encodeURIComponent(id)}`, {
+    cache: "no-store",
+  });
+}
+
+export async function createReturn(input: CreateReturnInput): Promise<Return> {
+  return request<Return>("/returns", {
+    method: "POST",
+    body: input,
     cache: "no-store",
   });
 }
