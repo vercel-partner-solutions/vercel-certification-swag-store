@@ -8,7 +8,7 @@
  * at `sendMessage`, and render each message's `parts` inside
  * `<ConversationContent>`.
  *
- * Workshop docs: https://agent-foundations-certification.vercel.app/docs/chat-agent
+ * Workshop docs: https://agent-foundations-certification.vercel.app/docs/admin-chat-agent
  */
 import { useState } from "react";
 import {
@@ -25,8 +25,16 @@ import {
   PromptInputTextarea,
   PromptInputTools,
 } from "@/components/ai-elements/prompt-input";
+import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
 
-export function AgentChat() {
+const SUGGESTIONS = [
+  "Show me low-stock items",
+  "What were yesterday's top sellers?",
+  "Create a 10% off promo for hoodies",
+  "Summarize this week's revenue",
+];
+
+export function AdminAgentChat() {
   const [input, setInput] = useState("");
 
   const handleSubmit = (message: PromptInputMessage) => {};
@@ -38,13 +46,18 @@ export function AgentChat() {
         <ConversationScrollButton />
       </Conversation>
 
-      <div className="border-t p-3">
+      <div className="flex flex-col gap-3 border-t p-3">
+        <Suggestions>
+          {SUGGESTIONS.map((s) => (
+            <Suggestion key={s} suggestion={s} />
+          ))}
+        </Suggestions>
         <PromptInput onSubmit={handleSubmit}>
           <PromptInputBody>
             <PromptInputTextarea
               value={input}
               onChange={(e) => setInput(e.currentTarget.value)}
-              placeholder="Ask the agent"
+              placeholder="Ask the admin agent…"
             />
           </PromptInputBody>
           <PromptInputFooter>

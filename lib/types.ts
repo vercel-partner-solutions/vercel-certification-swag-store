@@ -137,6 +137,89 @@ export interface Order {
   createdAt: string;
 }
 
+export type BackOfficeReturnStatus = "pending" | "processing" | "completed";
+export type BackOfficeReturnDecision = "approved" | "rejected" | "needs_info";
+
+export type SupportTicketStatus = "open" | "pending" | "resolved" | "closed";
+export type SupportTicketPriority = "low" | "normal" | "high" | "urgent";
+export type SupportTicketCategory =
+  | "shipping"
+  | "returns"
+  | "product_quality"
+  | "sizing"
+  | "billing"
+  | "payment"
+  | "account"
+  | "other";
+
+export interface SupportTicket {
+  id: string;
+  subject: string;
+  status: SupportTicketStatus;
+  priority: SupportTicketPriority;
+  category: SupportTicketCategory;
+  customerEmail: string;
+  relatedOrderId: string | null;
+  relatedReturnId: string | null;
+  assignee: string | null;
+  messagePreview: string;
+  createdAt: string;
+  updatedAt: string;
+  lastMessageAt: string;
+}
+
+export interface StockEntry {
+  productId: string;
+  product: {
+    id: string;
+    name: string;
+    slug: string;
+    category: string;
+  };
+  stock: number;
+  inStock: boolean;
+  lowStock: boolean;
+  updatedAt: string;
+}
+
+export interface ProductSalesRow {
+  productId: string;
+  product: {
+    id: string;
+    name: string;
+    slug: string;
+    category: string;
+    price: number;
+  };
+  unitsSold: number;
+  ordersCount: number;
+  revenue: number;
+  currency: string;
+}
+
+export interface BackOfficeDateRangeMeta {
+  count: number;
+  from: string;
+  to: string;
+}
+
+export interface BackOfficeStockMeta {
+  pagination: PaginationMeta;
+}
+
+export interface BackOfficeSalesMeta {
+  count: number;
+  from: string;
+  to: string;
+  days: number;
+  currency: string;
+  totals: {
+    unitsSold: number;
+    ordersCount: number;
+    revenue: number;
+  };
+}
+
 export interface Return {
   id: string;
   orderId: string;

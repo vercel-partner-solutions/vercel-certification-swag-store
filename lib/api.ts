@@ -1,13 +1,24 @@
 import type {
   ApiError,
+  BackOfficeDateRangeMeta,
+  BackOfficeReturnDecision,
+  BackOfficeReturnStatus,
+  BackOfficeSalesMeta,
+  BackOfficeStockMeta,
   CartWithProducts,
   CategorySlug,
   Category,
   PaginationMeta,
   Product,
+  ProductSalesRow,
   Promotion,
+  StockEntry,
   StockInfo,
   StoreConfig,
+  SupportTicket,
+  SupportTicketCategory,
+  SupportTicketPriority,
+  SupportTicketStatus,
   Order,
   Return,
 } from "./types";
@@ -27,10 +38,10 @@ interface RequestOptions {
   next?: { revalidate?: number; tags?: string[] };
 }
 
-interface ApiSuccess<T> {
+interface ApiSuccess<T, M = { pagination?: PaginationMeta }> {
   success: true;
   data: T;
-  meta?: { pagination?: PaginationMeta };
+  meta?: M;
 }
 
 interface ApiFailure {
@@ -45,7 +56,9 @@ interface CreateReturnInput {
   callback?: string; // used in phase 3
 }
 
-type ApiResult<T> = ApiSuccess<T> | ApiFailure;
+type ApiResult<T, M = { pagination?: PaginationMeta }> =
+  | ApiSuccess<T, M>
+  | ApiFailure;
 
 // Append the Vercel deployment-protection bypass as a query param.
 // Some protection configurations only honor the bypass via query (the header
@@ -116,7 +129,58 @@ async function request<T>(
   return json.data;
 }
 
-// ---- Reads (cached) ----
+// Variant of `request` that returns both `data` and `meta`. Used by
+// back-office endpoints whose `meta` carries information you actually want
+// (date windows, aggregate totals, pagination) rather than just bookkeeping.
+async function requestWithMeta<T, M>(
+  path: string,
+  options: RequestOptions = {},
+): Promise<{ data: T; meta: M }> {
+  const { method = "GET", body, cartToken, cache, next } = options;
+
+  const headers: Record<string, string> = {
+    "x-vercel-protection-bypass": PROTECTION_BYPASS,
+  };
+  if (cartToken) headers["x-cart-token"] = cartToken;
+  if (body !== undefined) headers["content-type"] = "application/json";
+
+  const init: RequestInit & { next?: RequestOptions["next"] } = {
+    method,
+    headers,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  };
+  if (cache) init.cache = cache;
+  if (next) init.next = next;
+
+  const res = await fetch(withBypass(path), init);
+
+  let json: ApiResult<T, M> | undefined;
+  try {
+    json = (await res.json()) as ApiResult<T, M>;
+  } catch {
+    // ignore — handled below
+  }
+
+  if (!res.ok || !json || json.success === false) {
+    const err = json && json.success === false ? json.error : undefined;
+    throw new ApiRequestError(
+      res.status,
+      err?.code,
+      err?.message ?? `API request failed: ${res.status} ${path}`,
+      err?.details,
+    );
+  }
+
+  if (json.meta === undefined) {
+    throw new ApiRequestError(
+      res.status,
+      undefined,
+      `API response missing meta: ${path}`,
+    );
+  }
+
+  return { data: json.data, meta: json.meta };
+}
 
 export interface GetProductsParams {
   page?: number;
@@ -175,15 +239,11 @@ export async function getStoreConfig(): Promise<StoreConfig> {
   });
 }
 
-// ---- Live (uncached) ----
-
 export async function getProductStock(idOrSlug: string): Promise<StockInfo> {
   return request<StockInfo>(`/products/${encodeURIComponent(idOrSlug)}/stock`, {
     cache: "no-store",
   });
 }
-
-// ---- Cart (uncached, token-scoped) ----
 
 export async function cartCreate(): Promise<{
   token: string;
@@ -270,6 +330,140 @@ export async function createReturn(input: CreateReturnInput): Promise<Return> {
   return request<Return>("/returns", {
     method: "POST",
     body: input,
+    cache: "no-store",
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Back Office (admin)
+//
+// All back-office reads use `cache: "no-store"` — they power the admin agent,
+// not the public storefront, so freshness matters more than throughput. None
+// of these are linked from publicly cached pages.
+// ---------------------------------------------------------------------------
+
+export interface GetBackOfficeReturnsParams {
+  /** ISO 8601 datetime or YYYY-MM-DD. Defaults to 30 days before `to`. */
+  from?: string;
+  /** ISO 8601 datetime or YYYY-MM-DD. Defaults to now. */
+  to?: string;
+  status?: BackOfficeReturnStatus;
+  decision?: BackOfficeReturnDecision;
+  /** 1–500, default 25. */
+  limit?: number;
+}
+
+export async function getBackOfficeReturns(
+  params: GetBackOfficeReturnsParams = {},
+): Promise<{ data: Return[]; meta: BackOfficeDateRangeMeta }> {
+  const qs = new URLSearchParams();
+  if (params.from) qs.set("from", params.from);
+  if (params.to) qs.set("to", params.to);
+  if (params.status) qs.set("status", params.status);
+  if (params.decision) qs.set("decision", params.decision);
+  if (params.limit) qs.set("limit", String(params.limit));
+
+  const path = qs.toString()
+    ? `/back-office/returns?${qs}`
+    : "/back-office/returns";
+  return requestWithMeta<Return[], BackOfficeDateRangeMeta>(path, {
+    cache: "no-store",
+  });
+}
+
+export interface GetBackOfficeSupportTicketsParams {
+  /** ISO 8601 datetime or YYYY-MM-DD. Defaults to 30 days before `to`. */
+  from?: string;
+  /** ISO 8601 datetime or YYYY-MM-DD. Defaults to now. */
+  to?: string;
+  status?: SupportTicketStatus;
+  priority?: SupportTicketPriority;
+  category?: SupportTicketCategory;
+  /** Staff username (e.g. `alex`). Unassigned tickets are excluded when set. */
+  assignee?: string;
+  /** 1–500, default 25. */
+  limit?: number;
+}
+
+export async function getBackOfficeSupportTickets(
+  params: GetBackOfficeSupportTicketsParams = {},
+): Promise<{ data: SupportTicket[]; meta: BackOfficeDateRangeMeta }> {
+  const qs = new URLSearchParams();
+  if (params.from) qs.set("from", params.from);
+  if (params.to) qs.set("to", params.to);
+  if (params.status) qs.set("status", params.status);
+  if (params.priority) qs.set("priority", params.priority);
+  if (params.category) qs.set("category", params.category);
+  if (params.assignee) qs.set("assignee", params.assignee);
+  if (params.limit) qs.set("limit", String(params.limit));
+
+  const path = qs.toString()
+    ? `/back-office/support-tickets?${qs}`
+    : "/back-office/support-tickets";
+  return requestWithMeta<SupportTicket[], BackOfficeDateRangeMeta>(path, {
+    cache: "no-store",
+  });
+}
+
+export interface GetBackOfficeStockParams {
+  /** Restrict to specific product IDs. Joined as a comma-separated list. */
+  productIds?: string[];
+  /** When set, filters to (or excludes) products with 1–5 units in stock. */
+  lowStock?: boolean;
+  /** When set, filters to (or excludes) products with at least one unit. */
+  inStock?: boolean;
+  /** 1-based page number, default 1. */
+  page?: number;
+  /** 1–200, default 50. */
+  limit?: number;
+}
+
+export async function getBackOfficeStock(
+  params: GetBackOfficeStockParams = {},
+): Promise<{ data: StockEntry[]; meta: BackOfficeStockMeta }> {
+  const qs = new URLSearchParams();
+  if (params.productIds && params.productIds.length > 0) {
+    qs.set("productIds", params.productIds.join(","));
+  }
+  // Spec defines lowStock/inStock as a string enum of "true"|"false".
+  if (params.lowStock !== undefined) {
+    qs.set("lowStock", params.lowStock ? "true" : "false");
+  }
+  if (params.inStock !== undefined) {
+    qs.set("inStock", params.inStock ? "true" : "false");
+  }
+  if (params.page) qs.set("page", String(params.page));
+  if (params.limit) qs.set("limit", String(params.limit));
+
+  const path = qs.toString()
+    ? `/back-office/inventory/stock?${qs}`
+    : "/back-office/inventory/stock";
+  return requestWithMeta<StockEntry[], BackOfficeStockMeta>(path, {
+    cache: "no-store",
+  });
+}
+
+export interface GetBackOfficeSalesParams {
+  /** ISO 8601 datetime or YYYY-MM-DD. Defaults to 30 days before `to`. */
+  from?: string;
+  /** ISO 8601 datetime or YYYY-MM-DD. Defaults to now. */
+  to?: string;
+  /** Restrict to a single product. 404 if it doesn't exist. */
+  productId?: string;
+}
+
+export async function getBackOfficeSales(
+  params: GetBackOfficeSalesParams = {},
+): Promise<{ data: ProductSalesRow[]; meta: BackOfficeSalesMeta }> {
+  const qs = new URLSearchParams();
+  if (params.from) qs.set("from", params.from);
+  if (params.to) qs.set("to", params.to);
+  if (params.productId) qs.set("productId", params.productId);
+
+  const path = qs.toString()
+    ? `/back-office/analytics/sales?${qs}`
+    : "/back-office/analytics/sales";
+  return requestWithMeta<ProductSalesRow[], BackOfficeSalesMeta>(path, {
     cache: "no-store",
   });
 }
