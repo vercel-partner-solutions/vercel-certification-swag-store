@@ -218,6 +218,7 @@ export async function getProductById(idOrSlug: string): Promise<Product> {
 }
 
 export async function getCategories(): Promise<Category[]> {
+  console.log("[getCategories]");
   return request<Category[]>("/categories", {
     next: { revalidate: DEFAULT_REVALIDATE, tags: ["categories"] },
   });
