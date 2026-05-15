@@ -30,7 +30,6 @@ import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
 const SUGGESTIONS = [
   "Show me low-stock items",
   "What were yesterday's top sellers?",
-  "Create a 10% off promo for hoodies",
   "Summarize this week's revenue",
 ];
 
