@@ -1,1 +1,1 @@
-// Place your admin chat workflow and DurableAgent here!
+// Place your admin chat workflow and WorkflowAgent here!

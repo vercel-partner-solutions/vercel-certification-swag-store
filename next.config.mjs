@@ -3,7 +3,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  serverExternalPackages: ["@vercel/oidc"],
+  serverExternalPackages: ["@vercel/oidc", "ajv"],
   images: {
     remotePatterns: [
       {
