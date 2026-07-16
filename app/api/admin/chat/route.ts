@@ -9,8 +9,13 @@
  * Workshop docs: https://agent-foundations-certification.vercel.app/docs/admin-chat-agent
  */
 
-export const POST = async () =>
-  new Response(
-    "Not implemented yet — finish the chat-agent workshop step to enable this route.",
-    { status: 501 },
-  );
+import { adminChatFlow } from "@/lib/workflows/admin-chat-flow";
+import { createUIMessageStreamResponse } from "ai";
+import type { UIMessage } from "ai";
+import { start } from "workflow/api";
+
+export async function POST(req: Request) {
+  const { messages }: { messages: UIMessage[] } = await req.json();
+  const run = await start(adminChatFlow, [messages]);
+  return createUIMessageStreamResponse({ stream: run.readable });
+}
